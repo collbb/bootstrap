@@ -31,5 +31,5 @@ gen_nd_boxmul <- function(n) {
   curve(dnorm, col='red', add=TRUE)
 }
 
-n <- 10000
+n <- 100000
 gen_nd_boxmul(n)
