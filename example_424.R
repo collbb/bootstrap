@@ -14,7 +14,7 @@ gen_Xstar <- function(x, h) {
   return (Xstar)
 }
 
-modes <- function(y) {
+has_1mode <- function(y) {
   sum <- 0
   for(i in 2:length(y)) {
     if(y[i] > y[i-1] && y[i] > y[i+1]) {
@@ -22,9 +22,9 @@ modes <- function(y) {
     }
     
     if(sum > 1) {
-      return 2
+      return (FALSE)
     }
   }
   
-  return (sum)
+  return (sum == 1)
 }
