@@ -1,17 +1,23 @@
 #!/usr/bin/Rscript
 
-visualSLLN <- function() {
+visualSLLN <- function(rand_vars, n) {
   
-  n <- 1000
-  rand_vars <- rnorm(n)
-  
+  n <- length(rand_vars)
   means <- 1:n
+  
   for(i in 1:n) {
     means[i] <- mean(rand_vars[1:i])
   }
   
-  plot(means)
-  abline(0, 0)
+  plot(means, 
+       main = "Graphical representation of the SLLN*",
+       sub = "*Strong Law of Large Numbers",
+       xlab = "# of random variables included in the m,ean calculation",
+       ylab = "Mean of the random variables")
+  abline(0, 0, col = "red")
 }
 
-visualSLLN()
+n <- 1000
+rand_vars <- rnorm(n)
+
+visualSLLN(rand_vars)
