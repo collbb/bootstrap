@@ -26,6 +26,7 @@ m <- 1000
 Pi <- 1:n
 for(i in 1:n) {
   X <- rnorm(n)
+  #X <- rt(n, df=4)
   Pi[i] <- rss_44(X, m)
 }
 
