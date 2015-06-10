@@ -43,14 +43,15 @@ create_returnvalue <- function(x, y, a, b) {
     coefficients=c(a, b)))
 }
 
-proj.example <- function() {
-  n <- 50
+proj.example <- function(n = 50) {
   a <- 2
+  b <- 4
   x <- c(1:n)
-  y <- a*x + rnorm(n, sd=5)
-  #
+  
+  y <- a*x + b + rnorm(n, sd=2)
+  
   proj <- proj.lm(x, y)
-  #
+  
   plot(y)
   abline(proj$coefficients[1], proj$coefficients[2], col = "red")
 }
