@@ -1,2 +1,2 @@
-# bootstrap
-R code for bootstrap methoids in statistics
+# Bootstrap
+R code - Bootstrap methods in statistics
