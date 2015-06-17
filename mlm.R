@@ -51,6 +51,7 @@ proj.example <- function(n = 50) {
   y <- a*x + b + rnorm(n, sd=2)
   
   proj <- proj.lm(x, y)
+  #proj <- lm(x~y)
   
   plot(y)
   abline(proj$coefficients[1], proj$coefficients[2], col = "red")
