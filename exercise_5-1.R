@@ -3,48 +3,56 @@
 rm(list=ls())
 require("R.utils", quietly = TRUE)
 
+# Theorem 5.2.2 - bound calculation
 ex_5.1.i <- function(x, y) {
-  # Theorem 5.2.2 - bound calculation
-  alpha    <- .01
+  alpha    <- .05
   lin.mod  <- lm(x~y)
   est.beta <- as.numeric(lin.mod$coefficients[1])
   quant    <- qnorm(1-alpha/2)
   n        <- length(x)
   sn       <- my.sn(lin.mod$residuals, x, n)
-  
+
   lower.bound <- est.beta - (quant*sn/sqrt(n))
   upper.bound <- est.beta + (quant*sn/sqrt(n))
   
   # print solution
-  printf("             estimated beta = %.4f\n", est.beta)
-  printf("Theorem 5.2.2 - lower bound = %.4f\n", lower.bound)
-  printf("Theorem 5.2.2 - upper bound = %.4f\n", upper.bound)
+  printf("                   estimated beta = %.4f\n", est.beta)
+  printf("Theorem 5.2.2 (CLT) - lower bound = %.4f\n", lower.bound)
+  printf("Theorem 5.2.2 (CLT) - upper bound = %.4f\n", upper.bound)
+  printf("               Failure in percent = %.4f\n", failure(lower.bound, est.beta))
 }
 
-ex_5.1.ii <- function() {
-  # bootstrap - bound calculation
-  m  <- 1000
-  Ts <- c(1:m)
+failure <- function(bound, est.value) {
+  return (100 - abs(bound/est.value) * 100)
+}
+
+# Theorem 5.3.3 - bound calculation
+ex_5.1.ii <- function(x, y, m = 1000) {
+  n        <- length(x)
+  lin.mod  <- lm(x~y)
+  est.beta <- as.numeric(lin.mod$coefficients[1])
+  eps      <- lin.mod$residuals
+  eps.cent <- eps - mean(eps)
   
-  for(i in 1:m) {
+  Ts  <- c(1:m)
+  for(i in Ts) {
     # 1 resample
-    eps      <- eps - mean(eps)
-    eps.star <- sample(eps, length(eps), replace = TRUE)
-    y.star   <- x * est.beta + eps.star
+    eps.star <- sample(eps.cent, replace = TRUE)
+    Z        <- x * est.beta + eps.star
     
-    # 2 calculate T
-    proj.star     <- lm(x~y.star)
-    est.beta.star <- as.numeric(proj.star$coefficients[1])
-    sn.star       <- as.numeric(my.sn(proj.star$residuals, x, n))
+    # 2 calculate T's
+    lin.mod.star  <- lm(x~Z)
+    est.beta.star <- as.numeric(lin.mod.star$coefficients[1])
+    sn.star       <- as.numeric(my.sn(lin.mod.star$residuals, x, n))
     
-    Ts[i]         <- sqrt(n) * (est.beta.star - est.beta)/sqrt(sn.star)
+    Ts[i]         <- sqrt(n) * (est.beta.star - est.beta)/sn.star
   }
   
   # sort T's
   Ts <- sort(Ts)
   
-  printf("Bootstrap - lower bound = %.2f\n", Ts[990])
-  printf("Bootstrap - upper bound = %.2f\n", Ts[10])
+  printf("Theorem 5.3.3 - lower bound = %.4f\n", Ts[10])
+  printf("Theorem 5.3.3 - upper bound = %.4f\n", Ts[990])
 }
 
 my.sn <- function(residuals, x, n) {
@@ -62,7 +70,7 @@ eps  <- rnorm(n, mean = 0, sd = sqrt(var.given))
 x    <- c(1:n)/n
 y    <- x * beta.given + eps
 
-printf("                  Real beta = %.4f\n", beta.given)
+printf("                  Real beta = %.4f\n\n", beta.given)
 
 # exercise 5.1 i)
 ex_5.1.i(x, y)
