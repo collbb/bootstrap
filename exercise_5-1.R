@@ -5,7 +5,7 @@ require("R.utils", quietly = TRUE)
 
 # Theorem 5.2.2 - bound calculation
 ex_5.1.i <- function(x, y) {
-  alpha    <- .05
+  alpha    <- .01
   lin.mod  <- lm(x~y)
   est.beta <- as.numeric(lin.mod$coefficients[1])
   quant    <- qnorm(1-alpha/2)
@@ -19,7 +19,6 @@ ex_5.1.i <- function(x, y) {
   printf("                   estimated beta = %.4f\n", est.beta)
   printf("Theorem 5.2.2 (CLT) - lower bound = %.4f\n", lower.bound)
   printf("Theorem 5.2.2 (CLT) - upper bound = %.4f\n", upper.bound)
-  printf("               Failure in percent = %.4f\n", failure(lower.bound, est.beta))
 }
 
 failure <- function(bound, est.value) {
@@ -29,10 +28,11 @@ failure <- function(bound, est.value) {
 # Theorem 5.3.3 - bound calculation
 ex_5.1.ii <- function(x, y, m = 1000) {
   n        <- length(x)
-  lin.mod  <- lm(x~y)
+  lin.mod  <- lm(y~x-1)
   est.beta <- as.numeric(lin.mod$coefficients[1])
   eps      <- lin.mod$residuals
   eps.cent <- eps - mean(eps)
+  sn       <- my.sn(lin.mod$residuals, x, n)
   
   Ts  <- c(1:m)
   for(i in Ts) {
@@ -41,7 +41,7 @@ ex_5.1.ii <- function(x, y, m = 1000) {
     Z        <- x * est.beta + eps.star
     
     # 2 calculate T's
-    lin.mod.star  <- lm(x~Z)
+    lin.mod.star  <- lm(Z~x-1)
     est.beta.star <- as.numeric(lin.mod.star$coefficients[1])
     sn.star       <- as.numeric(my.sn(lin.mod.star$residuals, x, n))
     
@@ -51,13 +51,16 @@ ex_5.1.ii <- function(x, y, m = 1000) {
   # sort T's
   Ts <- sort(Ts)
   
-  printf("Theorem 5.3.3 - lower bound = %.4f\n", Ts[10])
-  printf("Theorem 5.3.3 - upper bound = %.4f\n", Ts[990])
+  lower.bound <- est.beta - (Ts[950]*sn/sqrt(n))
+  upper.bound <- est.beta - (Ts[50]*sn/sqrt(n))
+  
+  printf("Theorem 5.3.3 - lower bound = %.4f\n", lower.bound)
+  printf("Theorem 5.3.3 - upper bound = %.4f\n", upper.bound)
 }
 
 my.sn <- function(residuals, x, n) {
   emp.sigma.sq  <- var(residuals)
-  V_inverse     <- solve(x%*%x)/n
+  V_inverse     <- 1/((x%*%x)/n)
   return (sqrt(emp.sigma.sq * V_inverse))
 }
 
@@ -76,4 +79,4 @@ printf("                  Real beta = %.4f\n\n", beta.given)
 ex_5.1.i(x, y)
 
 # exercise 5.1 ii)
-#ex_5.1.ii(x, y)
+ex_5.1.ii(x, y)
