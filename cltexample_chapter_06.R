@@ -17,7 +17,7 @@ clt.bounds <- function(x, y, alpha=.1) {
   printf("   estimated beta = %.4f\n", est.beta)
   printf("CLT - lower bound = %.4f\n", lower.bound)
   printf("CLT - upper bound = %.4f\n", upper.bound)
-  plot(x, y)
+  plot(main="X and Y data", x, y, xlab="X data", ylab="y data")
 }
 
 # creation of simulated observations
@@ -28,4 +28,5 @@ eps  <- rnorm(n, mean = 0, sd = 1)
 x    <- runif(n, min = -2, max = 2)
 y    <- beta.given * x + eps
 
+printf("        real beta = %.4f\n", beta.given)
 clt.bounds(x, y, alpha = .1)
