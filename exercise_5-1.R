@@ -21,10 +21,6 @@ ex_5.1.i <- function(x, y) {
   printf("Theorem 5.2.2 (CLT) - upper bound = %.4f\n", upper.bound)
 }
 
-failure <- function(bound, est.value) {
-  return (100 - abs(bound/est.value) * 100)
-}
-
 # Theorem 5.3.3 - bound calculation
 ex_5.1.ii <- function(x, y, m = 1000) {
   n        <- length(x)
